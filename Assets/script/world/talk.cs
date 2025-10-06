@@ -1,4 +1,6 @@
+using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class talk : MonoBehaviour
@@ -16,6 +18,17 @@ public class talk : MonoBehaviour
     public GameObject bear;
     public GameObject crab;
     int numquest;
+
+    int quest1 = 0, quest2 = 0;
+    int exp = 0;
+    int level;
+    int upexp;
+    int money;
+    string itemname;
+
+    public GameObject canvasgif;
+    public TextMeshProUGUI textgif;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,6 +37,21 @@ public class talk : MonoBehaviour
     }
     private void Update()
     {
+        level = PlayerDataManager.Getlevel();
+        upexp = PlayerDataManager.Getexp();
+
+        if (level == 1)
+        {
+            exp = 40;
+            money = 100;
+        }
+        else if (level == 2)
+        {
+            exp = 20;
+            money = 200;
+        }
+        else { exp = 15; money = 300; }
+
         switch (numquest)
         {
             case 2:
@@ -117,7 +145,21 @@ public class talk : MonoBehaviour
                 text.text = "จงไปนำชิ้นส่วนที่สองมา";
                 PlayerDataManager.finishquest(6);
                 textnum = 10;
-                
+                //gif
+                quest1 += 1;
+                if (quest1 == 1) 
+                {
+                    itemname = "ALL ITEM +1";
+                    PlayerDataManager.Upexp(exp);
+                    PlayerDataManager.AddItem("hpPotion", 1);
+                    PlayerDataManager.AddItem("fullHpPotion", 1);
+                    PlayerDataManager.AddItem("manaPotion", 1);
+                    PlayerDataManager.AddItem("fullManaPotion", 1);
+                    PlayerDataManager.AddItem("phoenixFeather", 1);
+                    PlayerDataManager.addcash(money);
+                    StartCoroutine(showgif());
+                }
+
             }
             else if (!canvastalk.activeSelf && textnum == 0 && boss != null & crab == null)
             {
@@ -130,7 +172,21 @@ public class talk : MonoBehaviour
                 text.text = "ไปปราบ Umbra ให้ได้นะ";
                 PlayerDataManager.finishquest(9);
                 textnum = 10;
-                
+                //gif
+                quest2 += 1;
+                if (quest2 == 1)
+                {
+                    itemname = "ALL ITEM +1";
+                    money = 500;
+                    PlayerDataManager.Upexp(exp);
+                    PlayerDataManager.AddItem("hpPotion", 1);
+                    PlayerDataManager.AddItem("fullHpPotion", 1);
+                    PlayerDataManager.AddItem("manaPotion", 1);
+                    PlayerDataManager.AddItem("fullManaPotion", 1);
+                    PlayerDataManager.AddItem("phoenixFeather", 1);
+                    PlayerDataManager.addcash(money);
+                    StartCoroutine(showgif());
+                }
             }
             else if (!canvastalk.activeSelf && textnum == 0 && boss == null & crab == null)
             {
@@ -162,5 +218,46 @@ public class talk : MonoBehaviour
         canvastalk.SetActive(false);
         cantalk = false;
         textnum = 0;
+    }
+    private IEnumerator showgif()
+    {
+        canvasgif.SetActive(true);
+        textgif.text = $"EPX + {exp}  CASH + {money}\n{itemname}";
+        yield return new WaitForSeconds(2f);
+        canvasgif.SetActive(false);
+    }
+
+    public void chest() 
+    {
+        int numbers = Random.Range(0, 5);
+        int numbersitem = Random.Range(1, 3);
+        if (numbers == 0)
+        {
+            PlayerDataManager.AddItem("hpPotion", numbersitem);
+            itemname = $"Item hpPotion + {numbersitem}";
+        }
+        else if (numbers == 1)
+        {
+            PlayerDataManager.AddItem("fullHpPotion", numbersitem);
+            itemname = $"Item fullHpPotion + {numbersitem}";
+        }
+        else if (numbers == 2)
+        {
+            PlayerDataManager.AddItem("manaPotion", numbersitem);
+            itemname = $"Item manaPotion + {numbersitem}";
+        }
+        else if (numbers == 3)
+        {
+            PlayerDataManager.AddItem("fullManaPotion", numbersitem);
+            itemname = $"Item fullManaPotion + {numbersitem}";
+        }
+        else if (numbers == 4)
+        {
+            PlayerDataManager.AddItem("phoenixFeather", 1);
+            itemname = "Item phoenixFeather +1";
+        }
+        PlayerDataManager.addcash(money);
+        PlayerDataManager.Upexp(exp);
+        StartCoroutine(showgif());
     }
 }

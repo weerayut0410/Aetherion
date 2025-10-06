@@ -34,7 +34,7 @@ public class ShadowBeast : Character
 
     private void Start()
     {
-        fullhealth = 700;
+        fullhealth = 1000;
         health = fullhealth;
         fullmagicpoint = 20;
         magicpoint = 0;
@@ -52,6 +52,8 @@ public class ShadowBeast : Character
         DarkHowlTurnCount = 0;
         objattack1.SetActive(false);
         objattack2.SetActive(false);
+        PlayerDataManager.isnewbie();
+        Time.timeScale = 0.0f;
     }
     protected override void Update()
     {
@@ -163,7 +165,7 @@ public class ShadowBeast : Character
     {
 
         Character target = FindRandomPlayer();
-        DarkHowlTurnCount = 0;
+        DarkHowlTurnCount = 1;
         if (target != null)
         {
             pendingDamage = Int * 1.5f;

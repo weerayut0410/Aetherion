@@ -398,6 +398,9 @@ MonoBehaviour:
     playerStartPos: {x: 53.2, y: 3, z: 63.09}
     playerplayPos: {x: 0, y: 0, z: 0}
     numquest: 1
+    level: 1
+    exp: 0
+    cash: 0
     defeatedEnemies: []
   soundattack: {fileID: 0}
   sounduse: {fileID: 0}
@@ -406,8 +409,14 @@ MonoBehaviour:
   textheal: {fileID: 0}
   weaknesses: []
   element: 
+  posion: 0
+  crabstack: 0
+  textposion: {fileID: 0}
+  textcrabstack: {fileID: 0}
+  effect: 
   intdef: 0
   intres: 99999
+  weaknessesname: Physical
 --- !u!114 &4111833956702380630
 MonoBehaviour:
   m_ObjectHideFlags: 0

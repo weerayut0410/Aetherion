@@ -6,6 +6,7 @@ using static UnityEngine.GraphicsBuffer;
 using UnityEngine.UI;
 using static Unity.Cinemachine.CinemachineTargetGroup;
 using UnityEngine.TextCore.Text;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Mage : Character
 {
@@ -436,6 +437,44 @@ public class Mage : Character
             mainaction.SetActive(true);
         }
     }
+
+    private bool findweak(string name)
+    {
+        Character[] all = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        List<Character> players = new List<Character>();
+
+        foreach (Character c in all)
+        {
+            if (c.isEnemy && c.IsAlive())
+            {
+                if (c.weaknesses.Contains(name))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Character findenemy(string name)
+    {
+        var enemies = turnManager.enemyteam.Where(e => e.IsAlive()).ToList();
+        Character[] all = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        List<Character> players = new List<Character>();
+
+        foreach (Character c in all)
+        {
+            if (c.isEnemy && c.IsAlive())
+            {
+                if (c.weaknesses.Contains(name))
+                {
+                    return c;
+                }
+            }
+        }
+        return enemies.OrderBy(e => e.GetHealthLevel10()).First(); ;
+    }
+
     private IEnumerator AutoDecideAction()
     {
         yield return new WaitForSeconds(1f); // หน่วงเวลาเล็กน้อยให้ดูเป็นธรรมชาติ
@@ -479,7 +518,16 @@ public class Mage : Character
             // ไม่มีศัตรูให้โจมตี — จบเทิร์น
             yield break;
         }
+        if (findweak("Ice")) 
+        {
+            var target = findenemy("Ice");
+            Click.target = target.gameObject;
+            IceShard();
 
+            PlayerDataManager.setaiaction($"{characterName}AI Rulebase Use IceShard");
+            textai.text = PlayerDataManager.getaiaction();
+            yield break;
+        }
         // ✅ Rule 2: ใช้ ArcaneBurst ถ้า MP พอ, ศัตรู ≥ 2, และสุ่ม 70%
         if (magicpoint >= 35 && enemies.Count >= 2 && Random.value < 0.7f)
         {
@@ -495,7 +543,7 @@ public class Mage : Character
         // ✅ Rule 3: ใช้ Fireball โจมตีศัตรู HP ต่ำสุด ถ้า MP พอ และสุ่ม 70%
         if (magicpoint >= 25 && Random.value < 0.7f)
         {
-            var target = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+            var target = findenemy("Fire");
             Click.target = target.gameObject;
             Fireball();
 
@@ -508,7 +556,7 @@ public class Mage : Character
         // ใส่วงเล็บเพื่อความถูกต้องของลอจิก
         if ((magicpoint >= 20 && Random.value < 0.8f) || magicpoint >= 60)
         {
-            var target = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+            var target = findenemy("Ice");
             Click.target = target.gameObject;
             IceShard();
 
@@ -519,7 +567,7 @@ public class Mage : Character
 
         // ✅ Rule 5: ใช้ Basic Attack โจมตีศัตรู HP ต่ำสุด
         {
-            var target = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+            var target = findenemy("Fire");
             Click.target = target.gameObject;
             Attack();
 
@@ -537,30 +585,28 @@ public class Mage : Character
     private float GetManaShieldScore()
     {
         float score = GetInverseHP(health, fullhealth) * 1.3f;
-        if (ManaShieldTurnCount == 0) score += 1.5f;
+        if (ManaShieldTurnCount == 0) score += 0.8f;
         if (magicpoint > 30) score += 0.5f;
-        score += Random.Range(0f, 0.5f);
+        score += Random.Range(0f, 0.3f);
         if (magicpoint < 30|| ManaShieldTurnCount != 0) score *= -1;
         return score;
     }
 
     private float GetArcaneBurstScore(List<Character> enemies)
     {
-        float score = (enemies.Count >= 2 ? 2.0f : 0f);
+        float score = (enemies.Count >= 3 ? 2.0f : 0f);
         if (magicpoint > 35) score += 0.5f;
-        score += Random.Range(0f, 0.6f);
+        score += Random.Range(0f, 0.3f);
         if (magicpoint < 35) score *= -1;
         return score;
     }
 
     private float GetFireballScore(List<Character> enemies)
     {
-        int minLevel = enemies.Min(e => e.GetHealthLevel10());
-        float inverseLevel = (11 - minLevel) / 10f;
-
-        float score = inverseLevel * 1.5f;
+        float score = (magicpoint > 20 ? 0.5f : 0f);
         if (magicpoint > 25) score += 0.3f;
-        score += Random.Range(0f, 0.5f);
+        if (findweak("Fire")) score += 0.8f;
+        score += Random.Range(0f, 0.3f);
         if (magicpoint < 25) score *= -1;
         return score;
     }
@@ -568,7 +614,8 @@ public class Mage : Character
     private float GetIceShardScore()
     {
         float score = (magicpoint > 20 ? 0.5f : 0f);
-        score += Random.Range(0f, 0.8f);
+        score += Random.Range(0f, 0.3f);
+        if (findweak("Ice")) score += 1.5f;
         if (magicpoint < 20) score *= -1;
         return score;
     }
@@ -577,7 +624,9 @@ public class Mage : Character
     {
         int minLevel = enemies.Min(e => e.GetHealthLevel10());
         float inverseLevel = (11 - minLevel) / 10f;
-        return inverseLevel * 1.0f + 0.2f;
+        float score = 0;
+        if (findweak("Fire")) { score += 0.8f; }
+        return inverseLevel * 1.0f + 0.2f+score;
     }
 
     private IEnumerator AutoDecideActionByWeight()
@@ -611,7 +660,7 @@ public class Mage : Character
 };
 
         var bestSkill = skillScores.OrderByDescending(kv => kv.Value).First().Key;
-        Character lowestEnemy = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+        Character lowestEnemy = findenemy("Fire");
 
         switch (bestSkill)
         {
@@ -637,7 +686,7 @@ public class Mage : Character
                 break;
 
             case "IceShard":
-                Click.target = lowestEnemy.gameObject;
+                Click.target = findenemy("Ice").gameObject;
                 IceShard();
                 PlayerDataManager.setaiaction($"{characterName}AI Weight Score Use IceShard");
                 textai.text = PlayerDataManager.getaiaction();

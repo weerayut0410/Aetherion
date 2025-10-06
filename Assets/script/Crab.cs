@@ -115,10 +115,6 @@ public class Crab : Character
         magicpoint -= 20;
         if (target != null)
         {
-            var bleedPrefab = Resources.Load<Bleeding>("StatusEffects/Bleeding");
-
-
-            TurnManager.Instance.statusEffectManager.AddEffect(target, bleedPrefab, this);
             Target = target;
             pendingDamage = Int * 1.5f;
             isPhysicalAttack = false;

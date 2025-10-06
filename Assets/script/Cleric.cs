@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Linq;
 using static UnityEngine.GraphicsBuffer;
 using System.Collections.Generic;
+using static Unity.Collections.AllocatorManager;
+using static Unity.Cinemachine.CinemachineTargetGroup;
 
 public class Cleric : Character
 {
@@ -332,6 +334,8 @@ public class Cleric : Character
                         magicpoint -= 15;
                         Target = Click.target.GetComponentInParent<Character>();
                         TurnManager.Instance.statusEffectManager.RemoveAllDebuffs(Target);
+                        Target.posion = 0;
+                        Target.crabstack = 0;
                         animatorname = "attack";
                         soundattack = soundSanctuary;
                         animator.SetTrigger(animatorname);
@@ -460,6 +464,60 @@ public class Cleric : Character
             mainaction.SetActive(true);
         }
     }
+
+    private Character findenemy(string name)
+    {
+        var enemies = turnManager.enemyteam.Where(e => e.IsAlive()).ToList();
+        Character[] all = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        List<Character> players = new List<Character>();
+
+        foreach (Character c in all)
+        {
+            if (c.isEnemy && c.IsAlive())
+            {
+                if (c.weaknesses.Contains(name))
+                {
+                    return c;
+                }
+            }
+        }
+        return enemies.OrderBy(e => e.GetHealthLevel10()).First(); ;
+    }
+    private bool findteamstack()
+    {
+        Character[] all = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        List<Character> players = new List<Character>();
+
+        foreach (Character c in all)
+        {
+            if (!c.isEnemy && c.IsAlive())
+            {
+                if (c.posion >=4||c.crabstack >=6)
+                {
+                    return true;
+                }
+            }
+        }
+        return false; 
+    }
+    private Character findteamstackplayer()
+    {
+        Character[] all = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        List<Character> players = new List<Character>();
+
+        foreach (Character c in all)
+        {
+            if (!c.isEnemy && c.IsAlive())
+            {
+                if (c.posion >= 4 || c.crabstack >= 6)
+                {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+
     private IEnumerator AutoDecideAction()
     {
         yield return new WaitForSeconds(1f); // หน่วงเวลาเล็กน้อยให้ดูเป็นธรรมชาติ
@@ -509,12 +567,19 @@ public class Cleric : Character
         // ✅ Rule 2: ใช้ Purify ถ้ามีเพื่อนติดดีบัฟ สุ่ม 90%
         var debuffedAlly = aliveAllies.FirstOrDefault(a =>
             TurnManager.Instance.statusEffectManager.HasDebuff(a));
-        if (magicpoint >= 15 && debuffedAlly != null && Random.value < 0.9f)
+        if (magicpoint >= 15 && debuffedAlly != null && Random.value < 0.9f|| magicpoint >= 15 && findteamstack())
         {
-            Click.target = debuffedAlly.gameObject;
+            if (findteamstack())
+            {
+                Click.target = findteamstackplayer().gameObject;
+            }
+            else
+            {
+                Click.target = debuffedAlly.gameObject;
+            }
             Purify();
 
-            Character name = debuffedAlly.gameObject.GetComponentInParent<Character>();
+            Character name = Click.target.GetComponentInParent<Character>();
             PlayerDataManager.setaiaction($"{characterName}AI Rulebase Use Purify to {name.characterName}");
             textai.text = PlayerDataManager.getaiaction();
             yield break;
@@ -566,7 +631,7 @@ public class Cleric : Character
 
         Character target = null;
         if (enemies != null && enemies.Count > 0)
-            target = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+            target = findenemy("Physical");
 
         if (magicpoint >= 45 && enemies.Count >= 2 && debuffedenemies == null && Random.value < 0.6f && target != null)
         {
@@ -581,7 +646,7 @@ public class Cleric : Character
         // ✅ Rule 6: ใช้ Attack โจมตีศัตรู HP ต่ำสุด
         if (target != null)
         {
-            Click.target = target.gameObject;
+            Click.target = findenemy("Physical").gameObject;
             Attack();
 
             PlayerDataManager.setaiaction($"{characterName}AI Rulebase Use Attack");
@@ -610,6 +675,7 @@ public class Cleric : Character
     {
         bool hasDebuffedAlly = allies.Any(a => TurnManager.Instance.statusEffectManager.HasDebuff(a));
         float score = hasDebuffedAlly ? 1.5f : 0f;
+        if (findteamstack()) score += 1.5f;
         if (magicpoint > 15) score += 0.3f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 15) score *= -1;
@@ -637,7 +703,7 @@ public class Cleric : Character
     {
         var debuffedenemies = enemies.FirstOrDefault(a =>
             TurnManager.Instance.statusEffectManager.HasDebuff(a));
-        float score = enemies.Count >= 2 ? 1.5f : 0f;
+        float score = enemies.Count >= 3 ? 1.5f : 0f;
         if (magicpoint > 45) score += 0.5f;
         score += Random.Range(0f, 0.4f);
         if (magicpoint < 45 || debuffedenemies != null) score *= -1;
@@ -648,6 +714,8 @@ public class Cleric : Character
     {
         int minLevel = enemies.Min(e => e.GetHealthLevel10());
         float inverseLevel = (11 - minLevel) / 10f;
+        float score = 0;
+        if (findenemy("Physical")) { score += 0.8f; }
         return inverseLevel * 1.0f + 0.2f;
     }
     private IEnumerator AutoDecideActionByWeight()
@@ -684,7 +752,7 @@ public class Cleric : Character
 
         var bestSkill = skillScores.OrderByDescending(kv => kv.Value).First().Key;
 
-        Character lowestEnemy = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+        Character lowestEnemy = findenemy("Physical");
         Character lowestAlly = allies
             .Where(a => a.health < a.fullhealth * 0.6f && a != this)
             .OrderBy(a => a.health)
@@ -712,6 +780,14 @@ public class Cleric : Character
                     Click.target = debuffedAlly.gameObject;
                     Purify();
                     Character name = debuffedAlly.gameObject.GetComponentInParent<Character>();
+                    PlayerDataManager.setaiaction($"{characterName}AI Weight Score Use Purify to {name.characterName}");
+                    textai.text = PlayerDataManager.getaiaction();
+                }
+                else if (findteamstack())
+                {
+                    Click.target = findteamstackplayer().gameObject;
+                    Purify();
+                    Character name = findteamstackplayer().gameObject.GetComponentInParent<Character>();
                     PlayerDataManager.setaiaction($"{characterName}AI Weight Score Use Purify to {name.characterName}");
                     textai.text = PlayerDataManager.getaiaction();
                 }

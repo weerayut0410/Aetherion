@@ -1534,7 +1534,7 @@ Transform:
   m_GameObject: {fileID: 4398132597934540401}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.77, z: 0}
+  m_LocalPosition: {x: 8.73245, y: 0, z: 89.59911}
   m_LocalScale: {x: 0.29, y: 0.29, z: 0.29}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -1747,8 +1747,11 @@ MonoBehaviour:
     playerStartPos: {x: 53.2, y: 3, z: 63.09}
     playerplayPos: {x: 0, y: 0, z: 0}
     numquest: 1
+    level: 1
+    exp: 0
+    cash: 0
     defeatedEnemies: []
-  soundattack: {fileID: 0}
+  soundattack: {fileID: 8300000, guid: 161571c3ba209534c99c00471d68df67, type: 3}
   sounduse: {fileID: 0}
   soundphoenix: {fileID: 0}
   textdamage: {fileID: 5407553839411324694}
@@ -1759,6 +1762,7 @@ MonoBehaviour:
   crabstack: 0
   textposion: {fileID: 0}
   textcrabstack: {fileID: 0}
+  effect: 
 --- !u!114 &-2713396705338444400
 MonoBehaviour:
   m_ObjectHideFlags: 0

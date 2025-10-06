@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,6 +29,13 @@ public class TurnManager : MonoBehaviour
     public int winner = 0;
     bool stopgame = false;
     public GameObject stopcanvas;
+
+    public Image bar;
+    public TextMeshProUGUI levelext;
+    public TextMeshProUGUI exptext;
+
+    public GameObject canvastip;
+    public GameObject tipbutton;
     public enum StartMode
     {
         PlayerFirst,
@@ -60,14 +68,27 @@ public class TurnManager : MonoBehaviour
 
     void Start()
     {
+        tipbutton.SetActive(false);
         EndCanva.SetActive(false);
         if (!spawn)
         {
             StartCoroutine(InitializeTurnQueue());
         }
         endtext = EndCanva.GetComponentInChildren<TextMeshProUGUI>();
-    }
 
+    }
+    public void tip()
+    {
+        tipbutton.SetActive(true);
+        Time.timeScale = 0.0f;
+        canvastip.SetActive(true);
+        PlayerDataManager.notnewbie();
+    }
+    public void closetip()
+    {
+        Time.timeScale = 1.0f;
+        canvastip.SetActive(false);
+    }
 
     public IEnumerator InitializeTurnQueue()
     {
@@ -112,6 +133,13 @@ public class TurnManager : MonoBehaviour
 
     void Update()
     {
+
+        if (PlayerDataManager.newbie())
+        {
+            tip();
+        }
+
+
         if (!IsTeamAlive(false))
         {
             EndBattle(false);
@@ -213,40 +241,6 @@ public class TurnManager : MonoBehaviour
         }
         return false;
     }
-    void UpgradeCharacterStatsByTenPercent(CharacterStats character)
-    {
-        float percentageIncrease = 0.10f; // กำหนดเปอร์เซ็นต์การเพิ่มสเตตัสที่นี่
-
-        if (winner ==1)
-        {
-            // คำนวณและเพิ่ม Health (จำกัดไม่ให้เกิน baseHealth)
-            int healthIncrease = Mathf.CeilToInt((float)character.baseHealth * percentageIncrease);
-            character.baseHealth += healthIncrease;
-
-            // คำนวณและเพิ่ม Magic Point (จำกัดไม่ให้เกิน baseMagicPoint)
-            int magicPointIncrease = Mathf.CeilToInt((float)character.baseMagicPoint * percentageIncrease);
-            character.baseMagicPoint += magicPointIncrease;
-
-            // คำนวณและเพิ่มสเตตัสอื่นๆ (ถ้าไม่มีขีดจำกัดค่าสูงสุด ก็บวกเพิ่มไปได้เลย)
-            int attackIncrease = Mathf.CeilToInt((float)character.baseAttack * percentageIncrease);
-            character.baseAttack += attackIncrease;
-
-            int intelligenceIncrease = Mathf.CeilToInt((float)character.baseIntelligence * percentageIncrease);
-            character.baseIntelligence += intelligenceIncrease;
-
-            int defenseIncrease = Mathf.CeilToInt((float)character.baseDefense * percentageIncrease);
-            character.baseDefense += defenseIncrease;
-
-            int resistanceIncrease = Mathf.CeilToInt((float)character.baseResistance * percentageIncrease);
-            character.baseResistance += resistanceIncrease;
-
-            int speedIncrease = Mathf.CeilToInt((float)character.baseSpeed * percentageIncrease);
-            character.baseSpeed += speedIncrease;
-
-            // หลังจากอัปเดตค่าทั้งหมดแล้ว ให้บันทึกการเปลี่ยนแปลงผ่าน PlayerDataManager
-            PlayerDataManager.UpdateCharacterStats(character);
-        }
-    }
     void additem1()
     {
         if (winner == 1)
@@ -286,17 +280,39 @@ public class TurnManager : MonoBehaviour
        
         Time.timeScale = 0f;
         endtext.text = Win ? "Win" : "Lose";
+        
         PlayerDataManager.SetWinStatus(Win);
         if (Win) 
         {
             status.SetActive(true);
             PlayerDataManager.AddDefeatedEnemy(PlayerDataManager.getnamemon());
-            CharacterStats warriorStats = PlayerDataManager.GetCharacterStats("Warrior");
-            CharacterStats mageStats = PlayerDataManager.GetCharacterStats("Mage");
-            CharacterStats clericStats = PlayerDataManager.GetCharacterStats("Cleric");
-            UpgradeCharacterStatsByTenPercent(warriorStats);
-            UpgradeCharacterStatsByTenPercent(mageStats);
-            UpgradeCharacterStatsByTenPercent(clericStats);
+
+            int level = PlayerDataManager.Getlevel();
+            int upexp = PlayerDataManager.Getexp();
+            int exp;
+            int money;
+            bar.fillAmount = (float)upexp / 40;
+            levelext.text = $"Level {level}";
+            
+            if (level == 1)
+            {
+                exp = 40;
+                money = 100;
+            }
+            else if (level == 2)
+            {
+                exp = 20;
+                money = 200;
+            }
+            else { exp = 15; money = 300; }
+
+            exptext.text = $"EXP +{exp}";
+
+            if (winner == 1)
+            {
+                PlayerDataManager.Upexp(exp);
+                PlayerDataManager.addcash(money);
+            }
             additem1();
 
         }
@@ -306,7 +322,12 @@ public class TurnManager : MonoBehaviour
     {
         Cursor.visible = false; // ซ่อนเมาส์
         Cursor.lockState = CursorLockMode.Locked;
-        SceneManager.LoadScene("Environment_Free");
+        string name =PlayerDataManager.getnamemon();
+        if (name == "ghost") 
+        {
+            SceneManager.LoadScene("end");
+        }
+        else { SceneManager.LoadScene("Environment_Free"); }
     }
     // --- เมธอด UI ใหม่ ---
     public void UpdateTurnOrderUI()

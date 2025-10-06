@@ -57,6 +57,86 @@ public static class PlayerDataManager
         Debug.Log("All defeated enemies cleared.");
         SavePlayerDataToPlayerPrefs(); // บันทึกทันทีเมื่อมีการเปลี่ยนแปลง
     }
+    public static void addcash(int num)
+    {
+        currentSaveData.cash += num;
+    }
+    public static void usecash(int num)
+    {
+        currentSaveData.cash -= num;
+    }
+
+    public static int Getcash()
+    {
+        return currentSaveData.cash;
+    }
+
+    public static void Uplevel()
+    {
+        currentSaveData.level += 1;
+    }
+
+    public static int Getlevel()
+    {
+        return currentSaveData.level;
+    }
+
+    public static void Upexp(int num)
+    {
+        currentSaveData.exp += num;
+        if (currentSaveData.exp >= 40)
+        {
+            Reexp();
+        }
+    }
+
+    public static void Reexp()
+    {
+        currentSaveData.exp -=40;
+        Uplevel();
+        CharacterStats warriorStats = PlayerDataManager.GetCharacterStats("Warrior");
+        CharacterStats mageStats = PlayerDataManager.GetCharacterStats("Mage");
+        CharacterStats clericStats = PlayerDataManager.GetCharacterStats("Cleric");
+        upgard(warriorStats);
+        upgard(mageStats);
+        upgard(clericStats);
+    }
+
+    static void upgard(CharacterStats character) 
+    {
+        float percentageIncrease = 0.10f;
+
+        int healthIncrease = Mathf.CeilToInt((float)character.baseHealth * percentageIncrease);
+        character.baseHealth += healthIncrease;
+
+        // คำนวณและเพิ่ม Magic Point (จำกัดไม่ให้เกิน baseMagicPoint)
+        int magicPointIncrease = Mathf.CeilToInt((float)character.baseMagicPoint * percentageIncrease);
+        character.baseMagicPoint += magicPointIncrease;
+
+        // คำนวณและเพิ่มสเตตัสอื่นๆ (ถ้าไม่มีขีดจำกัดค่าสูงสุด ก็บวกเพิ่มไปได้เลย)
+        int attackIncrease = Mathf.CeilToInt((float)character.baseAttack * percentageIncrease);
+        character.baseAttack += attackIncrease;
+
+        int intelligenceIncrease = Mathf.CeilToInt((float)character.baseIntelligence * percentageIncrease);
+        character.baseIntelligence += intelligenceIncrease;
+
+        int defenseIncrease = Mathf.CeilToInt((float)character.baseDefense * percentageIncrease);
+        character.baseDefense += defenseIncrease;
+
+        int resistanceIncrease = Mathf.CeilToInt((float)character.baseResistance * percentageIncrease);
+        character.baseResistance += resistanceIncrease;
+
+        int speedIncrease = Mathf.CeilToInt((float)character.baseSpeed * percentageIncrease);
+        character.baseSpeed += speedIncrease;
+
+        // หลังจากอัปเดตค่าทั้งหมดแล้ว ให้บันทึกการเปลี่ยนแปลงผ่าน PlayerDataManager
+        PlayerDataManager.UpdateCharacterStats(character);
+    }
+
+    public static int Getexp()
+    {
+        return currentSaveData.exp;
+    }
 
     // --- เมธอดสำหรับจัดการชื่อมอนสเตอร์ (จากโค้ดเดิมของคุณ) ---
     public static void setnamemon(string name)
@@ -113,6 +193,19 @@ public static class PlayerDataManager
             currentSaveData.aiaction += "\n" + aiaction;
         }
         SavePlayerDataToPlayerPrefs(); // บันทึกทันทีเมื่อมีการเปลี่ยนแปลง
+    }
+
+    public static bool newbie()
+    {
+        return currentSaveData.newbie;
+    }
+    public static void notnewbie()
+    {
+        currentSaveData.newbie = false;
+    }
+    public static void isnewbie()
+    {
+        currentSaveData.newbie = true;
     }
 
     public static string getaiaction()

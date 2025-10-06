@@ -21,7 +21,7 @@ public class Mushroom : Character
         magicpoint = 0;
         atk = 5;
         baseatk = atk;
-        Int = 0;
+        Int = 10;
         baseInt = Int;
         def = 8;
         basedef = def;

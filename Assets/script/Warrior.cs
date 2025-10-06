@@ -439,6 +439,43 @@ public class Warrior : Character
         }
     }
 
+    private bool findweak(string name)
+    {
+        Character[] all = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        List<Character> players = new List<Character>();
+
+        foreach (Character c in all)
+        {
+            if (c.isEnemy && c.IsAlive())
+            {
+                if (c.weaknesses.Contains(name)) 
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Character findenemy(string name)
+    {
+        var enemies = turnManager.enemyteam.Where(e => e.IsAlive()).ToList();
+        Character[] all = FindObjectsByType<Character>(FindObjectsSortMode.None);
+        List<Character> players = new List<Character>();
+
+        foreach (Character c in all)
+        {
+            if (c.isEnemy && c.IsAlive())
+            {
+                if (c.weaknesses.Contains(name))
+                {
+                    return c;
+                }
+            }
+        }
+        return enemies.OrderBy(e => e.GetHealthLevel10()).First(); ;
+    }
+
     private IEnumerator AutoDecideAction()
     {
         yield return new WaitForSeconds(1f); // หน่วงเวลาเล็กน้อยให้ดูเป็นธรรมชาติ
@@ -502,7 +539,7 @@ public class Warrior : Character
         // ✅ Rule 4: ใช้ PowerSlash ถ้า MP พอ และโจมตีศัตรู HP ต่ำสุด สุ่มผ่าน 80%
         if (magicpoint >= 15 && Random.value < 0.8f || magicpoint >= 40)
         {
-            var target = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+            var target = findenemy("Physical");
             Click.target = target.gameObject;
             PowerSlash();
             
@@ -512,7 +549,7 @@ public class Warrior : Character
         }
         // ✅ Rule 5: ใช้ Basic Attack โจมตีศัตรู HP ต่ำสุด
         {
-            var target = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+            var target = findenemy("Physical");
             Click.target = target.gameObject;
             Attack();
             
@@ -550,6 +587,7 @@ public class Warrior : Character
     {
         float score = 0f;
         if (enemies.Count >= 2) score += 1.5f;
+        if (findweak("Physical")) score += 0.8f;
         if (magicpoint > 30) score += 0.5f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 30) score *= -1;
@@ -563,6 +601,7 @@ public class Warrior : Character
 
         float score = inverseLevel * 2.0f;
         if (magicpoint > 15) score += 0.5f;
+        if (findweak("Physical")) score += 0.8f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 15) score *= -1;
         return score;
@@ -608,7 +647,7 @@ public class Warrior : Character
 
         var bestSkill = skillScores.OrderByDescending(kv => kv.Value).First().Key;
 
-        Character lowestEnemy = enemies.OrderBy(e => e.GetHealthLevel10()).First();
+        Character lowestEnemy = findenemy("Physical");
 
         switch (bestSkill)
         {

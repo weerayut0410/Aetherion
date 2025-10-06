@@ -31,7 +31,7 @@ public class Bear : Character
         baseres = res;
         basespeed = speed;
         luck = 10;
-        weaknesses = new List<string> { "weaknessesname" };
+        weaknesses = new List<string> { weaknessesname };
     }
 
     protected override void Update()

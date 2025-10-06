@@ -114,6 +114,11 @@ public class PlayerSaveData
     public Vector3 playerStartPos = new Vector3(53.20f, 3.00f, 63.09f);
     public Vector3 playerplayPos = Vector3.zero;
     public int numquest;
+    public int level;
+    public int exp;
+    public int cash;
+    public bool newbie;
+    
 
     // เก็บชื่อ Prefab ของมอนสเตอร์ที่ถูกกำจัด "ทั้งหมด" (ไม่สนใจ Scene)
     public List<string> defeatedEnemies = new List<string>();
@@ -193,5 +198,9 @@ public class PlayerSaveData
         numaiaction = 0;
         Continue = false;
         numquest = 1;
+        level = 1;
+        exp = 0;
+        cash = 0;
+        newbie = false;
 }
 }

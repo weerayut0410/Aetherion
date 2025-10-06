@@ -10,6 +10,8 @@ public class menu : MonoBehaviour
 
     private void Start()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         backtomenu();
     }
     public void newgame()

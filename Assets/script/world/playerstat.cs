@@ -6,11 +6,20 @@ using UnityEngine.UI;
 public class playerstat : MonoBehaviour
 {
     public TextMeshProUGUI textstat;
-    public TextMeshProUGUI textskill;
     public Sprite imagewarriorstat;
     public Sprite imagemagestat;
     public Sprite imageclericstat;
+    public Sprite imagewarriorstatinfo;
+    public Sprite imagemagestatinfo;
+    public Sprite imageclericstatinfo;
+    public Sprite imagewarriorstatskill;
+    public Sprite imagemagestatskill;
+    public Sprite imageclericstatskill;
     public Image image;
+    public Image imageinfo;
+    public Image imageskill;
+
+    public TextMeshProUGUI leveltext;
 
     private void Start()
     {
@@ -46,26 +55,33 @@ public class playerstat : MonoBehaviour
     public void warriorstat()
     {
         image.sprite = imagewarriorstat;
+        imageinfo.sprite = imagewarriorstatinfo;
+        imageskill.sprite = imagewarriorstatskill;
         CharacterStats warriorStats = PlayerDataManager.GetCharacterStats("Warrior");
-        textstat.text = $"HP = {warriorStats.currentHealth} MP = {warriorStats.currentMagicPoint} ATK = {warriorStats.currentAttack} \nINT = {warriorStats.currentIntelligence} DEF = {warriorStats.currentDefense} RES = {warriorStats.currentResistance} LUCK = {warriorStats.currentLuck}";
-        textskill.text = "Attack โจมตี0.7 MP+10\r\nPowerSlash โจมตี1.5 ใช้ 15 MP\r\nTaunt ดึงความสนใจศัตรูทั้งหมด 2เทิร์น ใช้ 20 MP\r\nIronGuard ลดความเสียหายที่ได้รับ 50% 1เทิร์น \nใช้ 25 MP\r\nWhirlwind โจมตีทุกตัว0.8 ใช้ 30 MP";
+        textstat.text = $"HP = {warriorStats.currentHealth}\r\nMP = {warriorStats.currentMagicPoint}\r\nATK = {warriorStats.currentAttack}\r\nINT = {warriorStats.currentIntelligence}\r\nDEF = {warriorStats.currentDefense}\r\nRES = {warriorStats.currentResistance}\r\nLUCK = {warriorStats.currentLuck}";
     }
     public void magestat()
     {
         image.sprite = imagemagestat;
+        imageinfo.sprite = imagemagestatinfo;
+        imageskill.sprite = imagemagestatskill;
         CharacterStats mageStats = PlayerDataManager.GetCharacterStats("Mage");
-        textstat.text = $"HP = {mageStats.currentHealth} MP = {mageStats.currentMagicPoint} ATK = {mageStats.currentAttack}  \nINT = {mageStats.currentIntelligence} DEF = {mageStats.currentDefense} RES = {mageStats.currentResistance} LUCK = {mageStats.currentLuck}";
-        textskill.text = "Attack โจมตี0.7 MP+10\r\nFireball โจมตี1.8 ใช้ 25 MP\r\nIceShard โจมตี1.2 ลด ATK/INT 20% 2เทิร์น \nใช้ 20 MP\r\nArcaneBurst โจมตีทุกตัว1.0 ใช้ 35 MP\r\nManaShield สร้างโล่ 50% 2เทิร์น ใช้ 30 MP";
+        textstat.text = $"HP = {mageStats.currentHealth}\r\nMP = {mageStats.currentMagicPoint}\r\nATK = {mageStats.currentAttack}\r\nINT = {mageStats.currentIntelligence}\r\nDEF = {mageStats.currentDefense}\r\nRES = {mageStats.currentResistance}\r\nLUCK = {mageStats.currentLuck}";
     }
     public void clericstat()
     {
         image.sprite = imageclericstat;
+        imageinfo.sprite = imageclericstatinfo;
+        imageskill.sprite= imageclericstatskill;
         CharacterStats clericStats = PlayerDataManager.GetCharacterStats("Cleric");
-        textstat.text = $"HP = {clericStats.currentHealth} MP = {clericStats.currentMagicPoint} ATK = {clericStats.currentAttack} \nINT = {clericStats.currentIntelligence} DEF = {clericStats.currentDefense} RES = {clericStats.currentResistance} LUCK = {clericStats.currentLuck}";
-        textskill.text = "Attack โจมตี0.7 MP+10\r\nHeal ฟื้นฟู HP ตามค่า IN ใช้ 20 MP\r\nSanctuary ลดความเสียหายที่ได้รับ 40% 1เทิร์น \nใช้ 25 MP\r\nBlessing เพิ่ม ATK,INT 20% และ LUCK 10% 2เทิร์น ใช้ 20 MP\r\nPurify ล้างสถานะผิดปกติทั้งหมด ใช้ 15 MP\r\nCurse ลด ATK/INT/DEF/RES 20% ทุกตัว 2เทิร์น ใช้ 45 MP";
+        textstat.text = $"HP = {clericStats.currentHealth}\r\nMP = {clericStats.currentMagicPoint}\r\nATK = {clericStats.currentAttack}\r\nINT = {clericStats.currentIntelligence}\r\nDEF = {clericStats.currentDefense}\r\nRES = {clericStats.currentResistance}\r\nLUCK = {clericStats.currentLuck}";
     }
     public void home()
     {
         SceneManager.LoadScene("menu");
+    }
+    private void Update()
+    {
+        leveltext.text = $"Level { PlayerDataManager.Getlevel().ToString()}";
     }
 }

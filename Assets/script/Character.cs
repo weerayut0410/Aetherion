@@ -120,10 +120,6 @@ public class Character : MonoBehaviour
     public string element = "";
     public int posion;
     public int crabstack;
-
-    public TextMeshProUGUI textposion;
-    public TextMeshProUGUI textcrabstack;
-
     public string effect;
 
     protected virtual void Awake()
@@ -599,15 +595,6 @@ public class Character : MonoBehaviour
             {
                 Die();
             }
-        }
-
-        if(textposion != null && posion != 0)
-    {
-            textposion.text = posion.ToString();
-        }
-        if(textcrabstack != null && crabstack != 0)
-    {
-            textcrabstack.text = crabstack.ToString();
         }
 
         if (MovingToTarget)

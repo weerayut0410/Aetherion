@@ -24,6 +24,8 @@ public class monsterworld : MonoBehaviour
     public GameObject sound;
     AudioSource audiosound;
 
+    public GameObject block;
+
     public Light myLight;
 
     void Start()
@@ -41,6 +43,10 @@ public class monsterworld : MonoBehaviour
                 }
 
                 DynamicGI.UpdateEnvironment();
+            }
+            if (block != null) 
+            {
+                block.SetActive(false);
             }
             Destroy(gameObject);
         }
