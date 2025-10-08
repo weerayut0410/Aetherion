@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Crab
+  m_text: Cras
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -817,7 +817,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.03137255, g: 0.45882353, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1773,7 +1773,7 @@ Transform:
   m_GameObject: {fileID: 8009356186475261295}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.27976, y: 0, z: 89.65535}
+  m_LocalPosition: {x: -1.01116, y: 0.25044, z: -20.55183}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2148,7 +2148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.90588236, g: 0, b: 0.043137256, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2547,6 +2547,7 @@ MonoBehaviour:
     level: 1
     exp: 0
     cash: 0
+    newbie: 1
     defeatedEnemies: []
   soundattack: {fileID: 8300000, guid: 1d6538a782f672e48802c4a6df6ce4ee, type: 3}
   sounduse: {fileID: 0}
@@ -2557,8 +2558,6 @@ MonoBehaviour:
   element: 
   posion: 0
   crabstack: 0
-  textposion: {fileID: 0}
-  textcrabstack: {fileID: 0}
   effect: 
 --- !u!65 &8099861986485068101
 BoxCollider:

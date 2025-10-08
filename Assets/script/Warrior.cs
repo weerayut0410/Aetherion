@@ -494,7 +494,7 @@ public class Warrior : Character
             PlayerDataManager.setaiaction($"{characterName}AI Rulebase Use Phoenixfeather to {name.characterName}");
             textai.text = PlayerDataManager.getaiaction();
         }
-        // ✅ Rule 0.1:ใช้ item สุ่มผ่าน 50%
+        // ✅ Rule 0.1:
         yield return StartCoroutine(TryUseHealingItem(0.5f));
 
         while (isuseitem)
@@ -502,7 +502,7 @@ public class Warrior : Character
             yield return null;
         }
 
-        // ✅ Rule 1: ใช้ Taunt ถ้ามีเพื่อนเลือด < 60%, ยังไม่ Taunt, และสุ่ม 70%
+        // ✅ Rule 1: 
         if (magicpoint >= 20 &&
             !taunt &&
             allies.Any(a => a != this && a.health < a.fullhealth * 0.7f) &&
@@ -515,7 +515,7 @@ public class Warrior : Character
             textai.text = PlayerDataManager.getaiaction();
             yield break;
         }
-        // ✅ Rule 2: ใช้ IronGuard ถ้าเลือด < 50% และยังไม่บัฟ
+        // ✅ Rule 2: 
         if (magicpoint >= 25 && health < fullhealth * 0.5f && IronGuardTurnCount == 0)
         {
             Click.target = this.gameObject;
@@ -525,7 +525,7 @@ public class Warrior : Character
             textai.text = PlayerDataManager.getaiaction();
             yield break;
         }
-        // ✅ Rule 3: ใช้ Whirlwind ถ้า MP พอ และศัตรู ≥ 2 หรือสุ่ม 30%
+        // ✅ Rule 3: 
         if (magicpoint >= 30 && (enemies.Count >= 2 || Random.value < 0.3f))
         {
             var target = enemies.OrderBy(e => e.GetHealthLevel10()).First();
@@ -536,7 +536,7 @@ public class Warrior : Character
             textai.text = PlayerDataManager.getaiaction();
             yield break;
         }
-        // ✅ Rule 4: ใช้ PowerSlash ถ้า MP พอ และโจมตีศัตรู HP ต่ำสุด สุ่มผ่าน 80%
+        // ✅ Rule 4: 
         if (magicpoint >= 15 && Random.value < 0.8f || magicpoint >= 40)
         {
             var target = findenemy("Physical");
@@ -547,7 +547,7 @@ public class Warrior : Character
             textai.text = PlayerDataManager.getaiaction();
             yield break;
         }
-        // ✅ Rule 5: ใช้ Basic Attack โจมตีศัตรู HP ต่ำสุด
+        // ✅ Rule 5: 
         {
             var target = findenemy("Physical");
             Click.target = target.gameObject;
@@ -568,7 +568,7 @@ public class Warrior : Character
         int lowHPCount = allies.Count(a => a != this && a.health < a.fullhealth * 0.6f);
         float score = (lowHPCount * 2.0f);
         if (!taunt) score += 1.0f;
-        if (magicpoint > 20) score += 0.5f;
+        if (magicpoint >= 20) score += 0.5f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 20 || taunt) score *= -1;
         return score;
@@ -588,7 +588,7 @@ public class Warrior : Character
         float score = 0f;
         if (enemies.Count >= 2) score += 1.5f;
         if (findweak("Physical")) score += 0.8f;
-        if (magicpoint > 30) score += 0.5f;
+        if (magicpoint >= 30) score += 0.5f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 30) score *= -1;
         return score;
@@ -600,7 +600,7 @@ public class Warrior : Character
         float inverseLevel = (11 - minLevel) / 10f; // แปลงเป็นค่ากลับแบบ 0.1–1.0
 
         float score = inverseLevel * 2.0f;
-        if (magicpoint > 15) score += 0.5f;
+        if (magicpoint >= 15) score += 0.5f;
         if (findweak("Physical")) score += 0.8f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 15) score *= -1;

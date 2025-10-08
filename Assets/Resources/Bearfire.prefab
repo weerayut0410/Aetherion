@@ -796,7 +796,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.03137255, g: 0.45882353, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2166,7 +2166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.90588236, g: 0, b: 0.043137256, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2538,7 +2538,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: BearFire
+  m_text: Fang(Fire)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3234,7 +3234,7 @@ Transform:
   m_GameObject: {fileID: 7786957819891287655}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -3.7689219, y: -1.0811453, z: 2.1584396}
   m_LocalScale: {x: 0.74999994, y: 0.74999994, z: 0.74999994}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -3420,6 +3420,10 @@ MonoBehaviour:
     playerStartPos: {x: 53.2, y: 3, z: 63.09}
     playerplayPos: {x: 0, y: 0, z: 0}
     numquest: 1
+    level: 1
+    exp: 0
+    cash: 0
+    newbie: 1
     defeatedEnemies: []
   soundattack: {fileID: 8300000, guid: 6bdf9617f39376243b461d232e94f3f0, type: 3}
   sounduse: {fileID: 0}
@@ -3430,8 +3434,7 @@ MonoBehaviour:
   element: 
   posion: 0
   crabstack: 0
-  textposion: {fileID: 0}
-  textcrabstack: {fileID: 0}
+  effect: 
   elementname: Fire
   weaknessesname: Ice
   iceBear: 0

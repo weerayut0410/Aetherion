@@ -526,7 +526,7 @@ public class Cleric : Character
         var aliveAllies = allies.Where(a => a.IsAlive()).ToList();
         var enemies = turnManager.enemyteam.Where(e => e.IsAlive()).ToList();
         var fallenAlly = allies.FirstOrDefault(a => !a.IsAlive());
-        // ✅ Rule 0: ชุบเพื่อนถ้าตาย
+        // ✅ Rule 0: 
 
         if (phoenixfeather > 0 && fallenAlly != null)
         {
@@ -538,7 +538,7 @@ public class Cleric : Character
             PlayerDataManager.setaiaction($"{characterName}AI Rulebase Use Phoenixfeather to {name.characterName}");
             textai.text = PlayerDataManager.getaiaction();
         }
-        // ✅ Rule 0.1:ใช้ item สุ่ม 50%
+        // ✅ Rule 0.1:
         yield return StartCoroutine(TryUseHealingItem(0.5f));
 
         while (isuseitem)
@@ -546,7 +546,7 @@ public class Cleric : Character
             yield return null;
         }
 
-        // ✅ Rule 1: ใช้ Heal ถ้าเพื่อนมี HP < 60% และสุ่ม 90%
+        // ✅ Rule 1: 
         aliveAllies = allies.Where(a => a.IsAlive()).ToList();
         var lowHPAlly = aliveAllies
             .Where(a => a.health < a.fullhealth * 0.6f)
@@ -564,7 +564,7 @@ public class Cleric : Character
             yield break;
         }
 
-        // ✅ Rule 2: ใช้ Purify ถ้ามีเพื่อนติดดีบัฟ สุ่ม 90%
+        // ✅ Rule 2: 
         var debuffedAlly = aliveAllies.FirstOrDefault(a =>
             TurnManager.Instance.statusEffectManager.HasDebuff(a));
         if (magicpoint >= 15 && debuffedAlly != null && Random.value < 0.9f|| magicpoint >= 15 && findteamstack())
@@ -614,7 +614,7 @@ public class Cleric : Character
             yield break;
         }
 
-        // ✅ Rule 4: ใช้ Sanctuary ถ้าเลือดตัวเองต่ำ และยังไม่มี Sanctuary
+        // ✅ Rule 4: 
         if (magicpoint >= 25 && health < fullhealth * 0.5f && !sanctuary)
         {
             Click.target = this.gameObject;
@@ -625,7 +625,7 @@ public class Cleric : Character
             yield break;
         }
 
-        // ✅ Rule 5: ใช้ Curse ถ้ามีศัตรูหลายตัว และสุ่มผ่าน 60%
+        // ✅ Rule 5: 
         var debuffedenemies = enemies.FirstOrDefault(a =>
             TurnManager.Instance.statusEffectManager.HasDebuff(a));
 
@@ -703,7 +703,7 @@ public class Cleric : Character
     {
         var debuffedenemies = enemies.FirstOrDefault(a =>
             TurnManager.Instance.statusEffectManager.HasDebuff(a));
-        float score = enemies.Count >= 3 ? 1.5f : 0f;
+        float score = enemies.Count >= 2 ? 1.5f : 0f;
         if (magicpoint > 45) score += 0.5f;
         score += Random.Range(0f, 0.4f);
         if (magicpoint < 45 || debuffedenemies != null) score *= -1;
@@ -714,9 +714,7 @@ public class Cleric : Character
     {
         int minLevel = enemies.Min(e => e.GetHealthLevel10());
         float inverseLevel = (11 - minLevel) / 10f;
-        float score = 0;
-        if (findenemy("Physical")) { score += 0.8f; }
-        return inverseLevel * 1.0f + 0.2f;
+        return inverseLevel + 0.2f;
     }
     private IEnumerator AutoDecideActionByWeight()
     {

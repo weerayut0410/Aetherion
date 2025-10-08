@@ -122,6 +122,10 @@ public class Character : MonoBehaviour
     public int crabstack;
     public string effect;
 
+    public GameObject SelectTurn;
+
+    private Outline outline;
+
     protected virtual void Awake()
     {
         posion = 0;
@@ -130,6 +134,8 @@ public class Character : MonoBehaviour
             text = GameObject.Find("Damagescore")?.GetComponent<TextMeshProUGUI>();
         statusEffectManager = GetComponent<StatusEffectManager>();
         animator = GetComponent<Animator>();
+
+        outline = GetComponent<Outline>();
 
         playerW = GameObject.Find("Warrior");
         playerM = GameObject.Find("Mage");
@@ -286,18 +292,35 @@ public class Character : MonoBehaviour
     {
         text.text = "";
         useitem = true;
-        
+        if (!isEnemy)
+        {
+            SelectTurn.SetActive(true);
+        }
+        else 
+        {
+            outline.enabled = true;
+        }
     }
 
     public void EndTurn()
     {
         Target = null;
         audiosound.Stop();
+        if (!isEnemy)
+        {
+            if (SelectTurn) SelectTurn.SetActive(false);
+        }
+        else
+        {
+            outline.enabled = false;
+        }
         TurnManager.Instance.statusEffectManager.OnTurnEnd(this);
         TurnManager.Instance.NextTurn();
     }
 
-    public bool IsAlive()
+
+
+public bool IsAlive()
     {
         return health > 0;
     }

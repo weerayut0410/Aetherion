@@ -70,12 +70,13 @@ public class TurnManager : MonoBehaviour
     {
         tipbutton.SetActive(false);
         EndCanva.SetActive(false);
+        status.SetActive(false);
         if (!spawn)
         {
             StartCoroutine(InitializeTurnQueue());
         }
         endtext = EndCanva.GetComponentInChildren<TextMeshProUGUI>();
-
+        winner = 0;
     }
     public void tip()
     {
@@ -323,7 +324,7 @@ public class TurnManager : MonoBehaviour
         Cursor.visible = false; // ซ่อนเมาส์
         Cursor.lockState = CursorLockMode.Locked;
         string name =PlayerDataManager.getnamemon();
-        if (name == "ghost") 
+        if (name == "ghost" && winner >= 1) 
         {
             SceneManager.LoadScene("end");
         }

@@ -863,6 +863,7 @@ MonoBehaviour:
     level: 1
     exp: 0
     cash: 0
+    newbie: 1
     defeatedEnemies: []
   soundattack: {fileID: 8300000, guid: 161571c3ba209534c99c00471d68df67, type: 3}
   sounduse: {fileID: 0}
@@ -873,8 +874,6 @@ MonoBehaviour:
   element: 
   posion: 0
   crabstack: 0
-  textposion: {fileID: 0}
-  textcrabstack: {fileID: 0}
   effect: 
 --- !u!65 &3887936357273947936
 BoxCollider:
@@ -1709,7 +1708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.90588236, g: 0, b: 0.043137256, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1979,7 +1978,7 @@ Transform:
   m_GameObject: {fileID: 7686471344671302404}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.57345, y: 0.40849, z: 89.49463}
+  m_LocalPosition: {x: -4.26132, y: 0.42196, z: -26.05824}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2281,7 +2280,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Small Mushroom
+  m_text: Grim
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

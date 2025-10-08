@@ -493,7 +493,7 @@ public class Mage : Character
             textai.text = PlayerDataManager.getaiaction();
         }
 
-        // ✅ Rule 0.1: ใช้ item สุ่มผ่าน 50%
+        // ✅ Rule 0.1: 
         yield return StartCoroutine(TryUseHealingItem(0.5f));
 
         while (isuseitem)
@@ -501,7 +501,7 @@ public class Mage : Character
             yield return null;
         }
 
-        // ✅ Rule 1: ใช้ ManaShield เมื่อยังไม่มี shield และ MP พอ และ HP < 40%
+        // ✅ Rule 1: 
         if (magicpoint >= 30 && !shield && health < fullhealth * 0.4f)
         {
             Click.target = this.gameObject;
@@ -518,7 +518,17 @@ public class Mage : Character
             // ไม่มีศัตรูให้โจมตี — จบเทิร์น
             yield break;
         }
-        if (findweak("Ice")) 
+        if (findweak("Fire") && magicpoint >= 25)
+        {
+            var target = findenemy("Fire");
+            Click.target = target.gameObject;
+            Fireball();
+
+            PlayerDataManager.setaiaction($"{characterName}AI Rulebase Use Fireball");
+            textai.text = PlayerDataManager.getaiaction();
+            yield break;
+        }
+        if (findweak("Ice") && magicpoint >= 20) 
         {
             var target = findenemy("Ice");
             Click.target = target.gameObject;
@@ -528,7 +538,7 @@ public class Mage : Character
             textai.text = PlayerDataManager.getaiaction();
             yield break;
         }
-        // ✅ Rule 2: ใช้ ArcaneBurst ถ้า MP พอ, ศัตรู ≥ 2, และสุ่ม 70%
+        // ✅ Rule 2: 
         if (magicpoint >= 35 && enemies.Count >= 2 && Random.value < 0.7f)
         {
             var target = enemies.OrderBy(e => e.GetHealthLevel10()).First();
@@ -540,7 +550,7 @@ public class Mage : Character
             yield break;
         }
 
-        // ✅ Rule 3: ใช้ Fireball โจมตีศัตรู HP ต่ำสุด ถ้า MP พอ และสุ่ม 70%
+        // ✅ Rule 3: 
         if (magicpoint >= 25 && Random.value < 0.7f)
         {
             var target = findenemy("Fire");
@@ -552,7 +562,7 @@ public class Mage : Character
             yield break;
         }
 
-        // ✅ Rule 4: ใช้ IceShard ถ้า MP พอ และสุ่ม 80% (หรือ MP ≥ 60 ให้ยิงชัวร์)
+        // ✅ Rule 4: 
         // ใส่วงเล็บเพื่อความถูกต้องของลอจิก
         if ((magicpoint >= 20 && Random.value < 0.8f) || magicpoint >= 60)
         {
@@ -565,7 +575,7 @@ public class Mage : Character
             yield break;
         }
 
-        // ✅ Rule 5: ใช้ Basic Attack โจมตีศัตรู HP ต่ำสุด
+        // ✅ Rule 5: 
         {
             var target = findenemy("Fire");
             Click.target = target.gameObject;
@@ -586,7 +596,7 @@ public class Mage : Character
     {
         float score = GetInverseHP(health, fullhealth) * 1.3f;
         if (ManaShieldTurnCount == 0) score += 0.8f;
-        if (magicpoint > 30) score += 0.5f;
+        if (magicpoint >= 30) score += 0.5f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 30|| ManaShieldTurnCount != 0) score *= -1;
         return score;
@@ -595,7 +605,7 @@ public class Mage : Character
     private float GetArcaneBurstScore(List<Character> enemies)
     {
         float score = (enemies.Count >= 3 ? 2.0f : 0f);
-        if (magicpoint > 35) score += 0.5f;
+        if (magicpoint >= 35) score += 0.5f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 35) score *= -1;
         return score;
@@ -603,9 +613,8 @@ public class Mage : Character
 
     private float GetFireballScore(List<Character> enemies)
     {
-        float score = (magicpoint > 20 ? 0.5f : 0f);
-        if (magicpoint > 25) score += 0.3f;
-        if (findweak("Fire")) score += 0.8f;
+        float score = (magicpoint > 25 ? 0.5f : 0f);
+        if (findweak("Fire")) score += 1.5f;
         score += Random.Range(0f, 0.3f);
         if (magicpoint < 25) score *= -1;
         return score;
@@ -613,7 +622,7 @@ public class Mage : Character
 
     private float GetIceShardScore()
     {
-        float score = (magicpoint > 20 ? 0.5f : 0f);
+        float score = (magicpoint >= 20 ? 0.5f : 0f);
         score += Random.Range(0f, 0.3f);
         if (findweak("Ice")) score += 1.5f;
         if (magicpoint < 20) score *= -1;
@@ -624,9 +633,7 @@ public class Mage : Character
     {
         int minLevel = enemies.Min(e => e.GetHealthLevel10());
         float inverseLevel = (11 - minLevel) / 10f;
-        float score = 0;
-        if (findweak("Fire")) { score += 0.8f; }
-        return inverseLevel * 1.0f + 0.2f+score;
+        return inverseLevel + 0.2f ;
     }
 
     private IEnumerator AutoDecideActionByWeight()
